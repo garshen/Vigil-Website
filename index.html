@@ -944,6 +944,25 @@
             cursor: pointer;
         }
 
+        .consent-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .consent-check input {
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        .consent-check span {
+            font-size: 12.5px;
+            color: #666;
+            line-height: 1.5;
+        }
+
         .demo-status {
             margin-top: 15px;
             text-align: center;
@@ -1734,6 +1753,10 @@
                 <label for="message">What would you like to see in the demo?</label>
                 <textarea id="message" name="message" rows="4" placeholder="e.g. number of officers, sites, current pain points..."></textarea>
             </div>
+            <label class="consent-check">
+                <input type="checkbox" id="consent" name="consent" required>
+                <span>I agree to VIGIL contacting me about this request and storing my details for that purpose, in line with POPIA. We never sell or share your data with third parties.</span>
+            </label>
             <input type="hidden" name="_subject" value="New VIGIL Demo Request">
             <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
             <button type="submit" class="btn-primary demo-submit">Send Request</button>
@@ -1856,6 +1879,11 @@
                 const submitBtn = demoForm.querySelector('.demo-submit');
                 statusEl.textContent = '';
                 statusEl.className = 'demo-status';
+                if (!demoForm.consent.checked) {
+                    statusEl.textContent = 'Please confirm the consent checkbox to continue.';
+                    statusEl.classList.add('error');
+                    return;
+                }
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Sending...';
                 try {
