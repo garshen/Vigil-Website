@@ -887,6 +887,79 @@
             line-height: 1.6;
         }
 
+        /* Demo Request Form */
+        .demo-form-section {
+            padding: 80px 50px;
+            background: #f9f9f9;
+        }
+
+        .demo-form {
+            max-width: 640px;
+            margin: 50px auto 0;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 12px 14px;
+            border: 1.5px solid #e0e0e6;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 0 3px rgba(255,215,0,0.15);
+        }
+
+        .demo-submit {
+            width: 100%;
+            border: none;
+            cursor: pointer;
+        }
+
+        .demo-status {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            min-height: 20px;
+        }
+
+        .demo-status.success {
+            color: #1a8a4a;
+        }
+
+        .demo-status.error {
+            color: #c0392b;
+        }
+
         /* Testimonials Section */
         .testimonials-section {
             padding: 80px 50px;
@@ -1149,6 +1222,14 @@
                 grid-template-columns: 1fr;
             }
 
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .demo-form {
+                padding: 25px;
+            }
+
             .features, .dashboard-section, .roi-section, .security-section, .testimonials-section, .faq-section, .cta-section {
                 padding: 40px 20px;
             }
@@ -1176,7 +1257,7 @@
             <li><a href="#security">Security</a></li>
             <li><a href="#faq">FAQ</a></li>
         </ul>
-        <a href="mailto:garshenw@gmail.com?subject=VIGIL%20Demo%20Request" class="nav-cta">Get Demo</a>
+        <a href="#demo" class="nav-cta">Get Demo</a>
     </nav>
 
     <!-- Hero Section -->
@@ -1194,7 +1275,7 @@
                 designed specifically for South African security enterprises.
             </p>
             <div class="cta-buttons">
-                <a href="mailto:garshenw@gmail.com?subject=VIGIL%20Demo%20Request" class="btn-primary">Schedule Demo</a>
+                <a href="#demo" class="btn-primary">Schedule Demo</a>
                 <a href="#features" class="btn-secondary">Learn More</a>
             </div>
         </div>
@@ -1619,9 +1700,45 @@
         <h2>Ready to Transform Your Security Operations?</h2>
         <p>Join leading South African security firms using VIGIL to deliver better service with less paperwork</p>
         <div class="cta-buttons">
-            <a href="mailto:garshenw@gmail.com?subject=VIGIL%20Demo%20Request" class="btn-primary">Schedule Your Demo</a>
+            <a href="#demo" class="btn-primary">Schedule Your Demo</a>
             <a href="mailto:garshenw@gmail.com?subject=VIGIL%20Enterprise%20Inquiry" class="btn-secondary">Contact Sales</a>
         </div>
+    </section>
+
+    <!-- Demo Request Form -->
+    <section class="demo-form-section" id="demo">
+        <h2 class="section-title">Request a Demo</h2>
+        <p style="text-align:center; color:#666; max-width:600px; margin: -30px auto 50px; font-size:16px;">Tell us about your operation and we'll set up a walkthrough tailored to your team.</p>
+        <form class="demo-form" id="demoForm" action="https://formspree.io/f/xqpkrvnn" method="POST">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="company">Company</label>
+                    <input type="text" id="company" name="company" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone (optional)</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="message">What would you like to see in the demo?</label>
+                <textarea id="message" name="message" rows="4" placeholder="e.g. number of officers, sites, current pain points..."></textarea>
+            </div>
+            <input type="hidden" name="_subject" value="New VIGIL Demo Request">
+            <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+            <button type="submit" class="btn-primary demo-submit">Send Request</button>
+            <p class="demo-status" id="demoStatus"></p>
+        </form>
     </section>
 
     <!-- Footer -->
@@ -1728,6 +1845,41 @@
                     rotatorEl.classList.remove('fade-out');
                 }, 400);
             }, 2600);
+        }
+
+        // Demo request form (AJAX submit to Formspree)
+        const demoForm = document.getElementById('demoForm');
+        if (demoForm) {
+            demoForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const statusEl = document.getElementById('demoStatus');
+                const submitBtn = demoForm.querySelector('.demo-submit');
+                statusEl.textContent = '';
+                statusEl.className = 'demo-status';
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+                try {
+                    const res = await fetch(demoForm.action, {
+                        method: 'POST',
+                        body: new FormData(demoForm),
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    if (res.ok) {
+                        statusEl.textContent = "Thanks! We'll be in touch shortly.";
+                        statusEl.classList.add('success');
+                        demoForm.reset();
+                    } else {
+                        statusEl.textContent = 'Something went wrong. Please email garshenw@gmail.com directly.';
+                        statusEl.classList.add('error');
+                    }
+                } catch (err) {
+                    statusEl.textContent = 'Network error. Please email garshenw@gmail.com directly.';
+                    statusEl.classList.add('error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Send Request';
+                }
+            });
         }
     </script>
 </body>
