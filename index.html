@@ -603,15 +603,63 @@
 
         .dashboard-image {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            padding: 30px;
+            padding: 24px;
             border-radius: 8px;
             text-align: center;
             color: white;
-            min-height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 60px;
+        }
+
+        .phone-frame {
+            width: 240px;
+            border: 8px solid #0f0f1e;
+            border-radius: 34px;
+            overflow: hidden;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.35);
+            line-height: 0;
+        }
+
+        .phone-frame img {
+            width: 100%;
+            display: block;
+        }
+
+        /* Screenshot Gallery */
+        .gallery-section {
+            padding: 80px 50px;
+            background: #f9f9f9;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 50px auto 0;
+            align-items: start;
+        }
+
+        .gallery-item {
+            text-align: center;
+        }
+
+        .gallery-item .phone-frame {
+            width: 100%;
+            margin: 0 auto 15px;
+            transition: transform 0.4s cubic-bezier(.4,0,.2,1), box-shadow 0.4s cubic-bezier(.4,0,.2,1);
+        }
+
+        .gallery-item:hover .phone-frame {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 50px rgba(26,26,46,0.3);
+        }
+
+        .gallery-caption {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
         }
 
         /* ROI Section */
@@ -1135,6 +1183,7 @@
         body.js-reveal .officer-card,
         body.js-reveal .support-card,
         body.js-reveal .impact-item,
+        body.js-reveal .gallery-item,
         body.js-reveal .badge,
         body.js-reveal .faq-item,
         body.js-reveal .section-title,
@@ -1527,7 +1576,47 @@
                 </ul>
             </div>
             <div class="dashboard-image">
-                📊 VIGIL Command Dashboard
+                <div class="phone-frame">
+                    <img src="assets/images/screenshots/home-dashboard.png" alt="VIGIL home dashboard screenshot">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshot Gallery -->
+    <section class="gallery-section">
+        <h2 class="section-title">See VIGIL In Action</h2>
+        <p style="text-align:center; color:#666; max-width:650px; margin: -30px auto 50px; font-size:16px;">Real screens from the VIGIL app, running live on a security officer's device.</p>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <div class="phone-frame">
+                    <img src="assets/images/screenshots/sign-in.png" alt="VIGIL sign-in screen">
+                </div>
+                <div class="gallery-caption">Sign In</div>
+            </div>
+            <div class="gallery-item">
+                <div class="phone-frame">
+                    <img src="assets/images/screenshots/create-account.png" alt="VIGIL create account screen">
+                </div>
+                <div class="gallery-caption">Create Account</div>
+            </div>
+            <div class="gallery-item">
+                <div class="phone-frame">
+                    <img src="assets/images/screenshots/drawer-menu.png" alt="VIGIL navigation drawer menu">
+                </div>
+                <div class="gallery-caption">Navigation Menu</div>
+            </div>
+            <div class="gallery-item">
+                <div class="phone-frame">
+                    <img src="assets/images/screenshots/my-summary.png" alt="VIGIL personal summary screen">
+                </div>
+                <div class="gallery-caption">My Summary</div>
+            </div>
+            <div class="gallery-item">
+                <div class="phone-frame">
+                    <img src="assets/images/screenshots/incidents-list.png" alt="VIGIL incidents list screen">
+                </div>
+                <div class="gallery-caption">Incident Management</div>
             </div>
         </div>
     </section>
