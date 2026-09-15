@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIGIL - Enterprise Security Operations Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #1a1a1a;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: #ffd700;
+            color: #1a1a2e;
+        }
+
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #ffd700, #ff9d00);
+            z-index: 2000;
+            transition: width 0.15s ease-out;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(26, 26, 46, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            color: white;
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease, background 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(26, 26, 46, 0.98);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+
+        .logo-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: 900;
+            color: #ffd700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            position: relative;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding-bottom: 4px;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: #ffd700;
+            transition: width 0.3s cubic-bezier(.4,0,.2,1);
+        }
+
+        .nav-links a:hover {
+            color: #ffd700;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            position: relative;
+            overflow: hidden;
+            background: #ffd700;
+            color: #1a1a2e;
+            padding: 10px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 900;
+            transition: all 0.3s cubic-bezier(.4,0,.2,1);
+        }
+
+        .nav-cta:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(255,215,0,0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 100px 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+            animation: floatBlob 14s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -40%;
+            left: -30%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(83,109,254,0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+            animation: floatBlob 18s ease-in-out infinite reverse;
+        }
+
+        @keyframes floatBlob {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-40px, 40px) scale(1.1); }
+        }
+
+        @keyframes heroRise {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            animation: heroRise 0.9s cubic-bezier(.16,.84,.44,1) both;
+        }
+
+        .hero-logo {
+            height: 100px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-logo img {
+            height: 100%;
+            filter: brightness(1.1) drop-shadow(0 4px 8px rgba(255,215,0,0.3));
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, #ffffff 0%, #ffd700 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 22px;
+            color: #ffd700;
+            margin-bottom: 16px;
+            font-weight: 300;
+        }
+
+        .hero-rotator {
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #9aa0c0;
+            font-weight: 700;
+            margin-bottom: 30px;
+            min-height: 18px;
+        }
+
+        .hero-rotator span {
+            display: inline-block;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .hero-rotator span.fade-out {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+
+        .hero-description {
+            font-size: 16px;
+            color: #e0e0e0;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .btn-primary::before,
+        .btn-secondary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.5), transparent);
+            transform: translateX(-120%);
+            transition: transform 0.6s ease;
+            z-index: -1;
+        }
+
+        .btn-primary:hover::before,
+        .btn-secondary:hover::before {
+            transform: translateX(120%);
+        }
+
+        .btn-primary {
+            background: #ffd700;
+            color: #1a1a2e;
+            padding: 16px 40px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 16px;
+            transition: all 0.35s cubic-bezier(.4,0,.2,1);
+            border: 2px solid #ffd700;
+        }
+
+        .btn-primary:hover {
+            background: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255,215,0,0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ffd700;
+            padding: 16px 40px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 16px;
+            transition: all 0.35s cubic-bezier(.4,0,.2,1);
+            border: 2px solid #ffd700;
+        }
+
+        .btn-secondary:hover {
+            background: #ffd700;
+            color: #1a1a2e;
+            transform: translateY(-3px);
+        }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            background: white;
+            padding: 0;
+        }
+
+        .stat-item {
+            padding: 40px 20px;
+            text-align: center;
+            border-right: 1px solid #eee;
+            transition: background 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: #fafafa;
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-number {
+            font-size: 40px;
+            font-weight: 900;
+            color: #ffd700;
+            margin-bottom: 10px;
+            transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+        }
+
+        .stat-item:hover .stat-number {
+            transform: scale(1.08);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        /* Officers Section */
+        .officers-section {
+            padding: 80px 50px;
+            background: #f9f9f9;
+        }
+
+        .officers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1100px;
+            margin: 50px auto 0;
+        }
+
+        .officer-card {
+            background: white;
+            padding: 35px 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.4s cubic-bezier(.4,0,.2,1), box-shadow 0.4s cubic-bezier(.4,0,.2,1);
+        }
+
+        .officer-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 35px rgba(26,26,46,0.12);
+        }
+
+        .officer-avatar {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            border: 3px solid #ffd700;
+            padding: 6px;
+            transition: transform 0.4s cubic-bezier(.4,0,.2,1);
+        }
+
+        .officer-card:hover .officer-avatar {
+            transform: scale(1.06);
+        }
+
+        .officer-svg {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .officer-badge {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 34px;
+            height: 34px;
+            background: #1a1a2e;
+            border: 2px solid #ffd700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .officer-role {
+            font-size: 17px;
+            font-weight: 900;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+        }
+
+        .officer-desc {
+            font-size: 13.5px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 50px;
+            background: #f9f9f9;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 50px;
+            color: #1a1a2e;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid transparent;
+            transition: transform 0.4s cubic-bezier(.4,0,.2,1), box-shadow 0.4s cubic-bezier(.4,0,.2,1), border-color 0.4s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 35px rgba(26,26,46,0.12);
+            border-color: rgba(255,215,0,0.4);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            display: inline-block;
+            transition: transform 0.4s cubic-bezier(.4,0,.2,1);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.15) rotate(-4deg);
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #1a1a2e;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Full Module List */
+        .modules-section {
+            padding: 80px 50px;
+            background: white;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .module-card {
+            background: #f9f9f9;
+            padding: 25px 30px;
+            border-radius: 10px;
+            border-top: 4px solid #ffd700;
+            transition: transform 0.4s cubic-bezier(.4,0,.2,1), box-shadow 0.4s cubic-bezier(.4,0,.2,1), background 0.4s ease;
+        }
+
+        .module-card:hover {
+            transform: translateY(-8px);
+            background: white;
+            box-shadow: 0 20px 35px rgba(26,26,46,0.1);
+        }
+
+        .module-card h3 {
+            font-size: 17px;
+            margin-bottom: 12px;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-list {
+            list-style: none;
+        }
+
+        .module-list li {
+            padding: 6px 0;
+            padding-left: 22px;
+            position: relative;
+            color: #555;
+            font-size: 13.5px;
+            line-height: 1.4;
+        }
+
+        .module-list li:before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            color: #1a1a2e;
+            font-weight: 900;
+        }
+
+        @media (max-width: 900px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dashboard Preview */
+        .dashboard-section {
+            padding: 80px 50px;
+            background: white;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .dashboard-text h2 {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: #1a1a2e;
+        }
+
+        .dashboard-list {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .dashboard-list li {
+            padding: 12px 0;
+            padding-left: 40px;
+            position: relative;
+            color: #666;
+            font-size: 15px;
+        }
+
+        .dashboard-list li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #ffd700;
+            font-weight: 900;
+            font-size: 20px;
+        }
+
+        .dashboard-image {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+
+        /* ROI Section */
+        .roi-section {
+            padding: 80px 50px;
+            background: #f9f9f9;
+        }
+
+        .roi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 50px auto 0;
+        }
+
+        .roi-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 10px;
+            border-top: 4px solid #ffd700;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.4s cubic-bezier(.4,0,.2,1), box-shadow 0.4s cubic-bezier(.4,0,.2,1);
+        }
+
+        .roi-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 35px rgba(26,26,46,0.12);
+        }
+
+        .roi-value {
+            font-size: 36px;
+            font-weight: 900;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .roi-description {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Security Section */
+        .security-section {
+            padding: 80px 50px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+        }
+
+        .security-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .security-content h2 {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 30px;
+        }
+
+        .security-badges {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .badge {
+            background: rgba(255,215,0,0.1);
+            border: 2px solid #ffd700;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.35s cubic-bezier(.4,0,.2,1), background 0.35s ease;
+        }
+
+        .badge:hover {
+            transform: translateY(-5px);
+            background: rgba(255,215,0,0.18);
+        }
+
+        .badge-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .badge-text {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .security-list {
+            list-style: none;
+        }
+
+        .security-list li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            font-size: 15px;
+        }
+
+        .security-list li:before {
+            content: '🔒';
+            position: absolute;
+            left: 0;
+        }
+
+        /* Why VIGIL Section */
+        .why-section {
+            padding: 80px 50px;
+            background: white;
+        }
+
+        .why-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 30px;
+            max-width: 1100px;
+            margin: 50px auto 0;
+            align-items: center;
+        }
+
+        .why-card {
+            padding: 35px 30px;
+            border-radius: 12px;
+        }
+
+        .why-old {
+            background: #f4f4f6;
+            border: 1px solid #e6e6ea;
+        }
+
+        .why-new {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            box-shadow: 0 20px 40px rgba(26,26,46,0.25);
+        }
+
+        .why-label {
+            font-weight: 900;
+            font-size: 15px;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .why-old .why-label {
+            color: #999;
+        }
+
+        .why-new .why-label {
+            color: #ffd700;
+        }
+
+        .why-vs {
+            font-weight: 900;
+            font-size: 18px;
+            color: #1a1a2e;
+            background: #ffd700;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            justify-self: center;
+            box-shadow: 0 8px 20px rgba(255,215,0,0.35);
+        }
+
+        .why-list {
+            list-style: none;
+        }
+
+        .why-list li {
+            padding: 10px 0;
+            padding-left: 26px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .why-list-old li:before {
+            content: '✕';
+            position: absolute;
+            left: 0;
+            color: #c0392b;
+            font-weight: 900;
+        }
+
+        .why-list-new li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #ffd700;
+            font-weight: 900;
+        }
+
+        /* Support Pillars Section */
+        .support-section {
+            padding: 80px 50px;
+            background: #f9f9f9;
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1100px;
+            margin: 50px auto 0;
+        }
+
+        .support-card {
+            background: white;
+            padding: 35px 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.4s cubic-bezier(.4,0,.2,1), box-shadow 0.4s cubic-bezier(.4,0,.2,1);
+        }
+
+        .support-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 35px rgba(26,26,46,0.1);
+        }
+
+        .support-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .support-card h3 {
+            font-size: 17px;
+            margin-bottom: 12px;
+            color: #1a1a2e;
+        }
+
+        .support-card p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Impact Statement Section */
+        .impact-section {
+            padding: 60px 50px;
+            background: #f4f4f6;
+        }
+
+        .impact-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .impact-title {
+            font-size: 22px;
+            font-weight: 900;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+        }
+
+        .impact-item p {
+            color: #666;
+            font-size: 14.5px;
+            line-height: 1.6;
+        }
+
+        /* Testimonials Section */
+        .testimonials-section {
+            padding: 80px 50px;
+            background: white;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 50px auto 0;
+        }
+
+        .testimonial-card {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 4px solid #ffd700;
+            transition: transform 0.4s cubic-bezier(.4,0,.2,1), box-shadow 0.4s cubic-bezier(.4,0,.2,1);
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 30px rgba(26,26,46,0.1);
+        }
+
+        .stars {
+            font-size: 16px;
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            font-weight: 900;
+            color: #1a1a2e;
+            font-size: 14px;
+        }
+
+        .testimonial-title {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 80px 50px;
+            background: white;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 50px auto 0;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        }
+
+        .faq-question {
+            padding: 20px;
+            background: #f9f9f9;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: #f0f0f0;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0 20px;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.8;
+            transition: max-height 0.45s cubic-bezier(.4,0,.2,1), padding 0.45s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 20px;
+        }
+
+        .faq-toggle {
+            font-size: 20px;
+            transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 50px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            margin-bottom: 40px;
+            color: #e0e0e0;
+        }
+
+        /* Footer */
+        footer {
+            background: #0f0f1e;
+            color: white;
+            padding: 40px 50px;
+            text-align: center;
+            font-size: 13px;
+            border-top: 1px solid #333;
+        }
+
+        footer a {
+            color: #ffd700;
+            text-decoration: none;
+        }
+
+        /* Scroll Reveal */
+        body.js-reveal .feature-card,
+        body.js-reveal .module-card,
+        body.js-reveal .roi-card,
+        body.js-reveal .testimonial-card,
+        body.js-reveal .officer-card,
+        body.js-reveal .support-card,
+        body.js-reveal .impact-item,
+        body.js-reveal .badge,
+        body.js-reveal .faq-item,
+        body.js-reveal .section-title,
+        body.js-reveal .dashboard-text,
+        body.js-reveal .dashboard-image,
+        body.js-reveal .security-content > div {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.7s cubic-bezier(.16,.84,.44,1), transform 0.7s cubic-bezier(.16,.84,.44,1);
+        }
+
+        body.js-reveal .in-view {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Back to Top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #ffd700;
+            color: #1a1a2e;
+            border: none;
+            font-size: 20px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            background: white;
+            transform: translateY(-4px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .hero {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .features-grid, .roi-grid, .testimonials-grid, .pricing-grid, .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-item {
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+
+            .stat-item:last-child {
+                border-bottom: none;
+            }
+
+            .dashboard-container, .security-content {
+                grid-template-columns: 1fr;
+            }
+
+            .why-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .why-vs {
+                margin: 0 auto;
+            }
+
+            .support-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features, .dashboard-section, .roi-section, .security-section, .testimonials-section, .faq-section, .cta-section {
+                padding: 40px 20px;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+
+            .pricing-grid {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <div class="logo-nav">🛡️ VIGIL</div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#all-features">Ecosystem</a></li>
+            <li><a href="#why-vigil">Why VIGIL</a></li>
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#security">Security</a></li>
+            <li><a href="#faq">FAQ</a></li>
+        </ul>
+        <a href="mailto:garshenw@gmail.com?subject=VIGIL%20Demo%20Request" class="nav-cta">Get Demo</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-logo">
+                <img src="assets/images/GarshenLogo-transparent.png" alt="VIGIL">
+            </div>
+            <h1>Enterprise Security Operations Intelligence</h1>
+            <p class="hero-subtitle">Real-Time Command Center for Modern Security Companies</p>
+            <p class="hero-rotator">✦ <span id="rotatorText">Real-Time Patrol Tracking</span></p>
+            <p class="hero-description">
+                Transform your security operations with VIGIL's enterprise platform. 
+                Real-time incident management, GPS-verified patrols, and complete operational visibility 
+                designed specifically for South African security enterprises.
+            </p>
+            <div class="cta-buttons">
+                <a href="mailto:garshenw@gmail.com?subject=VIGIL%20Demo%20Request" class="btn-primary">Schedule Demo</a>
+                <a href="#features" class="btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+        <div class="stat-item">
+            <div class="stat-number">2-3 HRS</div>
+            <div class="stat-label">Admin Time Saved Weekly per Officer</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">40-50%</div>
+            <div class="stat-label">Reduction in Admin Staff Workload</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">INSTANT</div>
+            <div class="stat-label">Real-Time Incident Reporting</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">PSIRA Compliant</div>
+        </div>
+    </section>
+
+    <!-- Officers -->
+    <section class="officers-section">
+        <h2 class="section-title">Built for Officers in the Field</h2>
+        <p style="text-align:center; color:#666; max-width:650px; margin: -30px auto 50px; font-size:16px;">Every screen in VIGIL is designed around how real security officers actually work — on patrol, on site, and in the control room.</p>
+        <div class="officers-grid">
+            <div class="officer-card">
+                <div class="officer-avatar">
+                    <svg viewBox="0 0 120 140" class="officer-svg" aria-hidden="true">
+                        <circle cx="60" cy="70" r="58" fill="#eef0f5"/>
+                        <path d="M30 46 Q60 18 90 46 L90 58 L30 58 Z" fill="#1a1a2e"/>
+                        <rect x="24" y="55" width="72" height="10" rx="5" fill="#0f0f1e"/>
+                        <circle cx="60" cy="60" r="3.5" fill="#ffd700"/>
+                        <circle cx="60" cy="72" r="17" fill="#f0c39a"/>
+                        <path d="M26 130 C26 100 40 86 60 86 C80 86 94 100 94 130 Z" fill="#22243c"/>
+                        <path d="M60 94 L67 99 L67 111 L60 117 L53 111 L53 99 Z" fill="#ffd700"/>
+                    </svg>
+                    <span class="officer-badge">🔦</span>
+                </div>
+                <div class="officer-role">Patrol Officer</div>
+                <div class="officer-desc">Logs GPS-verified patrols, scans checkpoints, and reports incidents from any site — even offline.</div>
+            </div>
+            <div class="officer-card">
+                <div class="officer-avatar">
+                    <svg viewBox="0 0 120 140" class="officer-svg" aria-hidden="true">
+                        <circle cx="60" cy="70" r="58" fill="#eef0f5"/>
+                        <path d="M30 46 Q60 18 90 46 L90 58 L30 58 Z" fill="#1a1a2e"/>
+                        <rect x="24" y="55" width="72" height="10" rx="5" fill="#0f0f1e"/>
+                        <circle cx="60" cy="60" r="3.5" fill="#ffd700"/>
+                        <circle cx="60" cy="72" r="17" fill="#f0c39a"/>
+                        <path d="M26 130 C26 100 40 86 60 86 C80 86 94 100 94 130 Z" fill="#22243c"/>
+                        <path d="M60 94 L67 99 L67 111 L60 117 L53 111 L53 99 Z" fill="#ffd700"/>
+                    </svg>
+                    <span class="officer-badge">🎧</span>
+                </div>
+                <div class="officer-role">Site Supervisor</div>
+                <div class="officer-desc">Reviews occurrence book entries, manages shift rosters, and verifies site visits in real time.</div>
+            </div>
+            <div class="officer-card">
+                <div class="officer-avatar">
+                    <svg viewBox="0 0 120 140" class="officer-svg" aria-hidden="true">
+                        <circle cx="60" cy="70" r="58" fill="#eef0f5"/>
+                        <path d="M30 46 Q60 18 90 46 L90 58 L30 58 Z" fill="#1a1a2e"/>
+                        <rect x="24" y="55" width="72" height="10" rx="5" fill="#0f0f1e"/>
+                        <circle cx="60" cy="60" r="3.5" fill="#ffd700"/>
+                        <circle cx="60" cy="72" r="17" fill="#f0c39a"/>
+                        <path d="M26 130 C26 100 40 86 60 86 C80 86 94 100 94 130 Z" fill="#22243c"/>
+                        <path d="M60 94 L67 99 L67 111 L60 117 L53 111 L53 99 Z" fill="#ffd700"/>
+                    </svg>
+                    <span class="officer-badge">🖥️</span>
+                </div>
+                <div class="officer-role">Control Room Operator</div>
+                <div class="officer-desc">Monitors panic alerts, threat detection feeds, and multi-site dashboards from command HQ.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <h2 class="section-title">Core Capabilities</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h3>Incident Management</h3>
+                <p>Report, track, and manage incidents from dispatch through resolution with GPS location, photos, and priority levels.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🗺️</div>
+                <h3>Patrol Tracking</h3>
+                <p>GPS-verified patrols with real-time tracking, site visit verification, and complete accountability proof.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📸</div>
+                <h3>Photo Evidence</h3>
+                <p>Capture and securely store incident photos with automatic cloud backup and encrypted access control.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👤</div>
+                <h3>Apprehensions</h3>
+                <p>Complete suspect management with SAPS handover integration, property recovery, and witness documentation.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📖</div>
+                <h3>Digital Occurrence Book</h3>
+                <p>Searchable, auto-numbered occurrence book replacing paper with supervisor review workflows and audit trails.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Offline-First Architecture</h3>
+                <p>Works seamlessly without internet connection, automatically syncs when online. Perfect for South Africa's connectivity.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Complete Module List -->
+    <section class="modules-section" id="all-features">
+        <h2 class="section-title">Every Module, Built for the Field</h2>
+        <p style="text-align:center; color:#666; max-width:700px; margin: -30px auto 50px; font-size:16px;">VIGIL covers the full operational lifecycle of a security company, from the officer on patrol to the provincial commander's dashboard.</p>
+        <div class="modules-grid">
+            <div class="module-card">
+                <h3>🚨 Incident &amp; Safety</h3>
+                <ul class="module-list">
+                    <li>Incident reporting with GPS, photos &amp; priority levels</li>
+                    <li>Panic button for instant emergency alerts</li>
+                    <li>Live panic alert monitoring for control room</li>
+                    <li>Threat detection scanning &amp; activity logs</li>
+                    <li>Apprehension &amp; suspect management with SAPS handover</li>
+                    <li>Found property register</li>
+                    <li>Digital Occurrence Book with supervisor review</li>
+                </ul>
+            </div>
+            <div class="module-card">
+                <h3>🗺️ Patrols &amp; Sites</h3>
+                <ul class="module-list">
+                    <li>GPS-verified patrol creation &amp; tracking</li>
+                    <li>QR/NFC checkpoint scanning</li>
+                    <li>Site visit logging &amp; verification</li>
+                    <li>Client &amp; client-site management</li>
+                    <li>Map-based location picker for sites &amp; checkpoints</li>
+                </ul>
+            </div>
+            <div class="module-card">
+                <h3>👥 Personnel &amp; Hierarchy</h3>
+                <ul class="module-list">
+                    <li>Employee records: create, edit, promote, separate</li>
+                    <li>Employment status updates &amp; PSIRA grading</li>
+                    <li>Organisational units with visual hierarchy view</li>
+                    <li>Position assignment across ranks &amp; divisions</li>
+                    <li>Role-based access control (Officer to Provincial Manager)</li>
+                    <li>New user verification &amp; admin approval workflow</li>
+                </ul>
+            </div>
+            <div class="module-card">
+                <h3>📊 Reporting &amp; Analytics</h3>
+                <ul class="module-list">
+                    <li>Shift summary &amp; shift member rosters</li>
+                    <li>Personal (my) summary dashboard per officer</li>
+                    <li>Area &amp; provincial summary rollups</li>
+                    <li>Custom report generation</li>
+                </ul>
+            </div>
+            <div class="module-card">
+                <h3>📶 Offline-First &amp; Sync</h3>
+                <ul class="module-list">
+                    <li>Full offline data capture with local-first storage</li>
+                    <li>Automatic background sync when connectivity returns</li>
+                    <li>Live network &amp; sync status indicators</li>
+                    <li>Pending changes tracker</li>
+                    <li>Conflict resolution for concurrent edits</li>
+                </ul>
+            </div>
+            <div class="module-card">
+                <h3>🔐 Compliance &amp; Access</h3>
+                <ul class="module-list">
+                    <li>Secure sign-up, sign-in &amp; password recovery (AWS Cognito)</li>
+                    <li>Officer profile &amp; account management</li>
+                    <li>Code of Conduct pledge screen</li>
+                    <li>Notice of Rights reference screen</li>
+                    <li>Encrypted photo evidence storage (AWS S3)</li>
+                    <li>Full audit trail across all operations</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why VIGIL -->
+    <section class="why-section" id="why-vigil">
+        <h2 class="section-title">One App. Not a Patchwork of Tools.</h2>
+        <p style="text-align:center; color:#666; max-width:700px; margin: -30px auto 50px; font-size:16px;">Most security platforms bolt together separate products for patrols, visitor logs, and reporting. VIGIL was built as a single offline-first app from day one.</p>
+        <div class="why-grid">
+            <div class="why-card why-old">
+                <div class="why-label">Traditional Multi-Tool Platforms</div>
+                <ul class="why-list why-list-old">
+                    <li>Separate apps for patrol, visitor log, inspections &amp; reporting</li>
+                    <li>Requires constant connectivity to function</li>
+                    <li>Fragmented data across disconnected systems</li>
+                    <li>Slower rollout, heavier training overhead</li>
+                </ul>
+            </div>
+            <div class="why-vs">VS</div>
+            <div class="why-card why-new">
+                <div class="why-label">VIGIL</div>
+                <ul class="why-list why-list-new">
+                    <li>One app: incidents, patrols, OB, apprehensions, reporting &amp; more</li>
+                    <li>Fully offline-first — works with zero signal, syncs automatically</li>
+                    <li>Single source of truth across every rank and site</li>
+                    <li>Built specifically for South African PSIRA-graded teams</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Preview -->
+    <section class="dashboard-section" id="dashboard">
+        <div class="dashboard-container">
+            <div class="dashboard-text">
+                <h2>Complete Operational Visibility</h2>
+                <p>Monitor all your security operations from one intuitive dashboard. Real-time status updates, incident heatmaps, patrol verification, and team performance metrics at your fingertips.</p>
+                <ul class="dashboard-list">
+                    <li>Real-time incident tracking with status updates</li>
+                    <li>GPS-verified patrol heatmaps and coverage</li>
+                    <li>Officer performance analytics and KPIs</li>
+                    <li>Multi-site coordination and oversight</li>
+                    <li>Automated alerts and critical incident notifications</li>
+                    <li>Historical data analysis and reporting</li>
+                </ul>
+            </div>
+            <div class="dashboard-image">
+                📊 VIGIL Command Dashboard
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI Section -->
+    <section class="roi-section">
+        <h2 class="section-title">Proven ROI Impact</h2>
+        <div class="roi-grid">
+            <div class="roi-card">
+                <div class="roi-value">R50-100</div>
+                <div class="roi-description">Saved per officer monthly (paper/printing elimination)</div>
+            </div>
+            <div class="roi-card">
+                <div class="roi-value">60+ sec</div>
+                <div class="roi-description">Faster incident reporting vs manual processes</div>
+            </div>
+            <div class="roi-card">
+                <div class="roi-value">95%</div>
+                <div class="roi-description">Reduction in administrative disputes</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support Pillars -->
+    <section class="support-section">
+        <h2 class="section-title">How VIGIL Supports Your Operation</h2>
+        <div class="support-grid">
+            <div class="support-card">
+                <div class="support-icon">📡</div>
+                <h3>Real-Time Field Data</h3>
+                <p>Every incident, patrol, and checkpoint scan reaches command the moment connectivity returns — no end-of-shift paperwork.</p>
+            </div>
+            <div class="support-card">
+                <div class="support-icon">💡</div>
+                <h3>Actionable Insights</h3>
+                <p>Shift, area, and provincial summaries turn raw field activity into decisions your commanders can act on immediately.</p>
+            </div>
+            <div class="support-card">
+                <div class="support-icon">🎯</div>
+                <h3>Measurable Service Delivery</h3>
+                <p>Track KPIs, patrol coverage, and response times against your own benchmarks — with a full audit trail behind every number.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Section -->
+    <section class="security-section" id="security">
+        <div class="security-content">
+            <div>
+                <h2>Enterprise-Grade Security</h2>
+                <p>VIGIL is built on AWS infrastructure with military-grade encryption, role-based access control, and comprehensive audit trails for full compliance.</p>
+                <ul class="security-list">
+                    <li>AWS-backed infrastructure with 99.99% uptime SLA</li>
+                    <li>End-to-end encryption for all data in transit and at rest</li>
+                    <li>POPIA compliant data protection and privacy</li>
+                    <li>Role-based access control (RBAC) with granular permissions</li>
+                    <li>Complete audit trail of all operations</li>
+                    <li>Multi-factor authentication support</li>
+                </ul>
+            </div>
+            <div class="security-badges">
+                <div class="badge">
+                    <div class="badge-icon">🔐</div>
+                    <div class="badge-text">AWS Secured</div>
+                </div>
+                <div class="badge">
+                    <div class="badge-icon">✓</div>
+                    <div class="badge-text">POPIA Compliant</div>
+                </div>
+                <div class="badge">
+                    <div class="badge-icon">🛡️</div>
+                    <div class="badge-text">ISO Standards Ready</div>
+                </div>
+                <div class="badge">
+                    <div class="badge-icon">📋</div>
+                    <div class="badge-text">PSIRA Aligned</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Early Adopters -->
+    <section class="testimonials-section">
+        <h2 class="section-title">Be Among the First</h2>
+        <p style="text-align:center; color:#666; max-width:600px; margin: -30px auto 50px; font-size:16px;">VIGIL is now available for early adoption. Be one of the first security companies in South Africa to run fully digital operations.</p>
+        <div class="testimonials-grid">
+            <div class="testimonial-card" style="text-align:center; border-left:none; border-top: 4px solid #ffd700;">
+                <div style="font-size:40px; margin-bottom:15px;">🚀</div>
+                <div class="testimonial-author" style="font-size:16px; margin-bottom:10px;">Early Adopter Advantage</div>
+                <p class="testimonial-text" style="font-style:normal;">Get in early and shape how VIGIL evolves. Your feedback directly influences the roadmap.</p>
+            </div>
+            <div class="testimonial-card" style="text-align:center; border-left:none; border-top: 4px solid #ffd700;">
+                <div style="font-size:40px; margin-bottom:15px;">🤝</div>
+                <div class="testimonial-author" style="font-size:16px; margin-bottom:10px;">Pilot Programme</div>
+                <p class="testimonial-text" style="font-style:normal;">We are offering a limited pilot programme for forward-thinking security firms. Contact us to qualify.</p>
+            </div>
+            <div class="testimonial-card" style="text-align:center; border-left:none; border-top: 4px solid #ffd700;">
+                <div style="font-size:40px; margin-bottom:15px;">📍</div>
+                <div class="testimonial-author" style="font-size:16px; margin-bottom:10px;">Built for South Africa</div>
+                <p class="testimonial-text" style="font-style:normal;">Designed from the ground up for SA security companies — PSIRA grades, SAPS integration, and offline-first for local connectivity.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+
+    <!-- FAQ -->
+    <section class="faq-section" id="faq">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">
+                    How does VIGIL work offline?
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    VIGIL uses a local-first architecture where all data is stored locally on the officer's device. When internet is available, VIGIL automatically syncs all changes to the cloud. This means officers can continue reporting incidents, patrols, and apprehensions even in areas with poor connectivity.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    What platforms does VIGIL support?
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    VIGIL is available on iOS, Android, and Web. Officers can use their existing smartphones, and managers can access the command dashboard from any device with internet access.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    Is VIGIL PSIRA compliant?
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Yes, VIGIL is fully designed to align with PSIRA requirements for South African private security companies. We include support for all security grades, ranks, and divisions recognized by PSIRA.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    How secure is the photo evidence storage?
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Photos are stored in AWS S3 with end-to-end encryption. Access is controlled through role-based permissions, and there's a complete audit trail of who accessed what photos and when.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    Can VIGIL integrate with SAPS systems?
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    VIGIL captures and manages SAPS case numbers and officer details. We're working on deeper SAPS API integrations. Contact our sales team for current integration capabilities.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    What kind of support do you provide?
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Support varies by plan. Starter plans get email support, Professional gets priority email/phone support, and Enterprise gets dedicated account managers and custom training.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Statement -->
+    <section class="impact-section">
+        <div class="impact-grid">
+            <div class="impact-item">
+                <div class="impact-title">Minimise Human Error</div>
+                <p>One offline-first platform replaces paper registers, radio logs, and disconnected spreadsheets with a single source of truth.</p>
+            </div>
+            <div class="impact-item">
+                <div class="impact-title">Maximise Field Intelligence</div>
+                <p>Command sees what's happening on the ground the moment it happens — not at the end of the week.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <h2>Ready to Transform Your Security Operations?</h2>
+        <p>Join leading South African security firms using VIGIL to deliver better service with less paperwork</p>
+        <div class="cta-buttons">
+            <a href="mailto:garshenw@gmail.com?subject=VIGIL%20Demo%20Request" class="btn-primary">Schedule Your Demo</a>
+            <a href="mailto:garshenw@gmail.com?subject=VIGIL%20Enterprise%20Inquiry" class="btn-secondary">Contact Sales</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 VIGIL - Security Operations Intelligence Platform | Built for South Africa | AWS Powered</p>
+        <p style="margin-top: 10px;">Email: garshenw@gmail.com | <a href="https://github.com/garshen/VIGIL">View on GitHub</a></p>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+
+    <script>
+        // FAQ Accordion (single-open)
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.querySelector('.faq-question').addEventListener('click', () => {
+                const wasActive = item.classList.contains('active');
+                document.querySelectorAll('.faq-item.active').forEach(open => open.classList.remove('active'));
+                if (!wasActive) item.classList.add('active');
+            });
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Scroll progress bar + sticky nav shadow + back-to-top visibility
+        const nav = document.getElementById('mainNav');
+        const progress = document.getElementById('scrollProgress');
+        const backToTop = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            progress.style.width = `${docHeight > 0 ? (scrollTop / docHeight) * 100 : 0}%`;
+            nav.classList.toggle('scrolled', scrollTop > 20);
+            backToTop.classList.toggle('visible', scrollTop > 600);
+        }, { passive: true });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Highlight active nav link based on section in view
+        const navLinks = document.querySelectorAll('.nav-links a');
+        const sections = Array.from(navLinks)
+            .map(link => document.querySelector(link.getAttribute('href')))
+            .filter(Boolean);
+
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => link.classList.remove('active'));
+                    const match = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+                    if (match) match.classList.add('active');
+                }
+            });
+        }, { rootMargin: '-40% 0px -55% 0px' });
+
+        sections.forEach(section => navObserver.observe(section));
+
+        // Scroll-reveal animations
+        document.body.classList.add('js-reveal');
+        const revealEls = document.querySelectorAll(
+            '.feature-card, .module-card, .roi-card, .testimonial-card, .officer-card, .support-card, .impact-item, .badge, .faq-item, .section-title, .dashboard-text, .dashboard-image, .security-content > div'
+        );
+
+        revealEls.forEach((el, i) => {
+            el.style.transitionDelay = `${(i % 6) * 70}ms`;
+        });
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+        revealEls.forEach(el => revealObserver.observe(el));
+
+        // Hero rotating tagline
+        const rotatorPhrases = [
+            'Real-Time Patrol Tracking',
+            'Instant Incident Reporting',
+            'Offline-First Reliability',
+            'Complete Operational Visibility',
+            'Smarter Workforce Management'
+        ];
+        const rotatorEl = document.getElementById('rotatorText');
+        if (rotatorEl) {
+            let rotatorIndex = 0;
+            setInterval(() => {
+                rotatorEl.classList.add('fade-out');
+                setTimeout(() => {
+                    rotatorIndex = (rotatorIndex + 1) % rotatorPhrases.length;
+                    rotatorEl.textContent = rotatorPhrases[rotatorIndex];
+                    rotatorEl.classList.remove('fade-out');
+                }, 400);
+            }, 2600);
+        }
+    </script>
+</body>
+</html>
